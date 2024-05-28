@@ -1,0 +1,109 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<div class="content-wrapper">
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Stock Information -->
+            <div class="row stock-container">  
+                {% for stock, info in data.items %}
+                <div class="col-lg-4 col-6">
+                    <div class="small-box bg-info" data-tooltip="Click for more info">
+                        <div class="inner">
+                            <h3>${{ info.last_close }}</h3>
+                            <p>{{ stock }}</p>
+                            <p>1 Day Change: {{ info.last_day_change }}%</p>
+                            <p>3 Months Change: {{ info.last_3_months_change }}%</p>
+                            <p>Beta: {{ info.beta }}</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Charts -->
+            <div class="row mt-4">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Investment Value Line Chart</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Investment Distribution Pie Chart</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+$(function () {
+    var ctxLine = document.getElementById('lineChart').getContext('2d');
+    var ctxPie = document.getElementById('pieChart').getContext('2d');
+
+    // Line Chart Data
+    var lineChartData = {
+        labels: {{ line_chart_labels | safe }},
+        datasets: [
+            {% for stock, info in data.items %}
+            {
+                label: '{{ stock }}',
+                data: {{ info.history | safe }}.map(item => item['Investment Value']),
+                fill: false,
+                borderColor: '{{ info.color }}',
+                tension: 0.1
+            },
+            {% endfor %}
+        ]
+    };
+
+    // Pie Chart Data
+    var pieChartData = {
+        labels: [{% for stock, info in data.items %}'{{ stock }}', {% endfor %}],
+        datasets: [{
+            label: 'Investment Distribution',
+            data: {{ pie_chart_data | safe }},
+            backgroundColor: {{ pie_chart_colors | safe }},
+            borderColor: {{ pie_chart_colors | safe }},
+            borderWidth: 1
+        }]
+    };
+
+    // Line Chart Configuration
+    var lineChart = new Chart(ctxLine, {
+        type: 'line',
+        data: lineChartData,
+        options: {
+            responsive: true,
+            scales: {
+                x: { beginAtZero: true },
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Pie Chart Configuration
+    var pieChart = new Chart(ctxPie, {
+        type: 'pie',
+        data: pieChartData,
+        options: {
+            responsive: true
+        }
+    });
+});
+</script>
+{% endblock %}
