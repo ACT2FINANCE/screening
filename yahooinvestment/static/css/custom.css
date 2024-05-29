@@ -1,0 +1,39 @@
+.stock-container {
+    margin-top: 20px;  /* Add margin only to the stock boxes container */
+}
+
+.content-wrapper {
+    margin-left: 0;  /* Remove any left margin when sidebar is closed */
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar-collapse .content-wrapper {
+    margin-left: 250px;  /* Adjust the margin when sidebar is open */
+}
+
+.small-box {
+    text-align: center;  /* Center align the text in the small boxes */
+}
+
+.card {
+    margin: 20px 0;  /* Add more space between cards */
+}
+
+.card-body {
+    display: flex;
+    justify-content: center;  /* Center the chart within the card */
+}
+
+.card-body canvas {
+    max-width: 100%;  /* Ensure the chart fits within the card */
+    height: auto;
+}
+
+/* Ensuring the background color consistency */
+.content {
+    background-color: #f4f6f9; /* Match this color with the overall background */
+}
+
+.wrapper {
+    background-color: #f4f6f9; /* Match this color with the overall background */
+}
